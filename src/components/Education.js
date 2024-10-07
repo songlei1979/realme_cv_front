@@ -1,9 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { GlobalStateContext } from '../GlobalStateContext';
+
 
 function Education(props) {
+    const { updateFormData } = useContext(GlobalStateContext);
+    const navigate = useNavigate();
     const [educations, setEducations] = useState([
         { major: '', startTime: '', endTime: '', school: '', achievements: ''}
     ]);
+
+    const handleSubmit = () => {
+        updateFormData('educations', educations);
+        navigate('/work');
+    };
 
     const handleChange = (index, event) => {
         const newEducations = [...educations];
@@ -99,7 +109,7 @@ function Education(props) {
                 </div>
             ))}
             <button onClick={addEducation} style={buttonStyle}>+</button>
-            <button style={buttonStyle}>Submit</button>
+            <button onClick={handleSubmit} style={buttonStyle}>Next</button>
         </div>
     );
 }

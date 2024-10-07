@@ -1,7 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { GlobalStateContext } from '../GlobalStateContext';
+
 
 function Works(props) {
-    const [work, setWork] = useState([
+    const { formData, updateFormData } = useContext(GlobalStateContext);
+    const navigate = useNavigate();
+
+    const handleSubmit = () => {
+        updateFormData('works', work);
+        navigate('/interest');
+    };
+    
+    const [work, setWork] = useState(formData.works.length > 0 ? formData.works : [
         { job_title: '', startTime: '', endTime: '', organisation: '', tasks: '', achievements: '' }
     ]);
 
@@ -107,9 +118,10 @@ function Works(props) {
                 </div>
             ))}
             <button onClick={addWork} style={buttonStyle}>+</button>
-            <button style={buttonStyle}>Submit</button>
+            <button onClick={handleSubmit} style={buttonStyle}>Next</button>
         </div>
     );
 }
 
 export default Works;
+

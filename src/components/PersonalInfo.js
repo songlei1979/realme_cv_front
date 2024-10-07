@@ -1,11 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { GlobalStateContext } from '../GlobalStateContext';
 
 function PersonalInfo(props) {
+    const { updateFormData } = useContext(GlobalStateContext);
 
     const [name, setName] = useState("");
     const [phone, setPhone] = useState("");
     const [email, setEmail] = useState("");
     const [linkedIn, setLinkedIn] = useState("");
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        // 获取 temp_id
+        const fetchTempID = async () => {
+            try {
+                const response = await fetch('http://localhost:8000/api/generate-temp-id/');
+                if (response.ok) {
+                    const data = await response.json();
+                    updateFormData('temp_id', data.temp_id);  // 保存到全局状态中
+                } else {
+                    throw new Error('Failed to generate temp_id');
+                }
+            } catch (error) {
+                console.error('Error fetching temp_id:', error);
+            }
+        };
+
+        fetchTempID();
+    }, []);
+
+    
+    const handleSubmit = () => {
+        updateFormData('personal_info', { name, phone, email, linkedIn });
+
+        navigate('/statement');
+    };
 
     const inputStyle = {
         padding: '10px',
@@ -66,7 +96,7 @@ function PersonalInfo(props) {
                     style={inputStyle}
                 />
             </div>
-            <button style={{ padding: '10px 20px', backgroundColor: '#007BFF', color: 'white', border: 'none', cursor: 'pointer' }}>Submit</button>
+            <button onClick={handleSubmit} style={{ padding: '10px 20px', backgroundColor: '#007BFF', color: 'white', border: 'none', cursor: 'pointer' }}>Next</button>
         </div>    
     );
 }
