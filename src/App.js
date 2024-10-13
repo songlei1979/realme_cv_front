@@ -60,20 +60,30 @@ import Work from './components/Work';
 import Interests from './components/Interests';
 import { GlobalStateProvider } from './GlobalStateContext'; // 引入GlobalStateProvider
 
+// import './styles.css'; // 引入全局CSS文件
+
 function App() {
   return (
     <div className="App">
       <GlobalStateProvider> {/* 使用GlobalStateProvider包裹整个应用 */}
         <Router>
-          <nav>
+          <nav className='sidebar'>
             <ul>
-              <li><NavLink to="/">Home</NavLink></li>
+              {/* <li><NavLink to="/">Home</NavLink></li>
               <li><NavLink to="/personal-info" >Personal Info</NavLink></li>
               <li><NavLink to="/statement" >Personal Statement</NavLink></li>
               <li><NavLink to="/skills">Key Skills</NavLink></li>
               <li><NavLink to="/education">Education</NavLink></li>
               <li><NavLink to="/work">Work Experience</NavLink></li>
+              <li><NavLink to="/interest">Interests</NavLink></li> */}
+              
+              <li><NavLink to="/">Home</NavLink></li>
+              <li><NavLink to="/personal-info" >Personal Info</NavLink></li>
               <li><NavLink to="/interest">Interests</NavLink></li>
+              <li><NavLink to="/work">Work Experience</NavLink></li>
+              <li><NavLink to="/education">Education</NavLink></li>
+              <li><NavLink to="/skills">Key Skills</NavLink></li>
+              <li><NavLink to="/statement" >Personal Statement</NavLink></li>
             </ul>
           </nav>
           <div className="content">

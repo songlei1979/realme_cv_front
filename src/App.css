@@ -41,3 +41,54 @@ nav a:hover {
   color: rgb(6, 184, 244); 
   font-weight: bold;
 }
+
+
+
+.sidebar {
+  position: fixed;      /* 固定侧边栏 */
+  top: 0;               /* 距离页面顶部 */
+  left: 0;              /* 靠左 */
+  width: 200px;         /* 侧边栏宽度 */
+  height: 100%;         /* 高度设置为100%以覆盖整个页面高度 */
+  background-color: #f4f4f4;  /* 背景色 */
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* 添加阴影 */
+  padding: 20px;
+  box-sizing: border-box;  /* 包括内边距在内 */
+}
+
+/* 主内容区域样式 */
+.content {
+  margin-left: 220px;   /* 留出侧边栏的宽度 */
+  padding: 20px;
+}
+
+
+
+/* styles.css */
+
+/* 图标样式 */
+.icon-container {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  margin: 20px;
+}
+
+/* 文本框样式 */
+.tooltip {
+  position: absolute;
+  top: 150%;
+  left: 150px;
+  transform: translateX(-50%);
+  background-color: #28a745;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  z-index: 1;
+  
+  width: 300px;
+  word-wrap: break-word;
+  white-space: normal; 
+
+  text-align: left;
+}
