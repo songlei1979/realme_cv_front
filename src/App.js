@@ -69,21 +69,21 @@ function App() {
         <Router>
           <nav className='sidebar'>
             <ul>
-              {/* <li><NavLink to="/">Home</NavLink></li>
+              <li><NavLink to="/">Home</NavLink></li>
               <li><NavLink to="/personal-info" >Personal Info</NavLink></li>
               <li><NavLink to="/statement" >Personal Statement</NavLink></li>
               <li><NavLink to="/skills">Key Skills</NavLink></li>
               <li><NavLink to="/education">Education</NavLink></li>
               <li><NavLink to="/work">Work Experience</NavLink></li>
-              <li><NavLink to="/interest">Interests</NavLink></li> */}
+              <li><NavLink to="/interest">Interests</NavLink></li>
               
-              <li><NavLink to="/">Home</NavLink></li>
+              {/* <li><NavLink to="/">Home</NavLink></li>
               <li><NavLink to="/personal-info" >Personal Info</NavLink></li>
               <li><NavLink to="/interest">Interests</NavLink></li>
               <li><NavLink to="/work">Work Experience</NavLink></li>
               <li><NavLink to="/education">Education</NavLink></li>
               <li><NavLink to="/skills">Key Skills</NavLink></li>
-              <li><NavLink to="/statement" >Personal Statement</NavLink></li>
+              <li><NavLink to="/statement" >Personal Statement</NavLink></li> */}
             </ul>
           </nav>
           <div className="content">

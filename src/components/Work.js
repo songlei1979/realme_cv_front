@@ -48,13 +48,13 @@ function Work(props) {
         localStorage.setItem('Work_temp', JSON.stringify(tempData));
     }, [work, SVM_Rate_AIQ, SVM_Rate_STQ, chatbotResponseWork, showWorkResult]);
 
-    // const handleSubmit = () => {
-    //     navigate('/interest');  // 跳转到下一步
-    // };
-
     const handleSubmit = () => {
-        navigate('/education');  // 跳转到下一步
+        navigate('/interest');  // 跳转到下一步
     };
+
+    // const handleSubmit = () => {
+    //     navigate('/education');  // 跳转到下一步
+    // };
 
     const handleChange = (index, event) => {
         const newWork = [...work];
@@ -89,6 +89,7 @@ function Work(props) {
 
         try {
             const response = await fetch('http://10.244.159.50:1234/v1/chat/completions', {
+            // const response = await fetch('http://172.25.13.59:1234/v1/chat/completions', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(requestPayload),
@@ -123,6 +124,7 @@ function Work(props) {
         const csrftoken = getCookie('csrftoken');
         try {
             const response = await fetch('http://127.0.0.1:8000/api/predict/', {
+            // const response = await fetch('http://172.25.5.217:8000/api/predict/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -147,7 +149,7 @@ function Work(props) {
 
     // 处理优化按钮的点击
     const handleOptimization = async (index) => {
-        const work_data = {"Describe your work experience or projects that you've worked on. Try to provide quantifiable results, such as “Helped the department improve productivity by 20% through process optimization." : work[index].achievements};
+        const work_data = {"Describe any achievement beyond your role." : work[index].achievements};
 
         // 先通过 SVM 获取评分
         await sendToSVM(work_data.achievements, index, 'SVM_Rate_STQ', setSVM_Rate_STQ);
@@ -317,7 +319,10 @@ function Work(props) {
         gap: '10px'                 // p 和 div 之间的间距
       };
     
-    const info = "• State your job titles, the places where you worked and the start and finish dates for each.\n • List the main tasks in the jobs, especially those that relate to the position you are applying for, also include any achievements if you can."
+    const info = `· Newest job first.\n
+· Explain about 8 key tasks succinctly in note form.\n
+· Use verbs such as created, led, and stick to the same tense.\n
+· Include jobs unrelated to your studies it is all part of your experience.`
 
 
     return (
@@ -368,11 +373,11 @@ function Work(props) {
                                 onChange={(event) => handleChange(index, event)}
                                 style={inputStyleHalf}
                             />
-                            <label style={labelInlineStyle}>Institute</label>
+                            <label style={labelInlineStyle}>Organisation</label>
                             <input
                                 type="text"
                                 name="organisation"
-                                placeholder="Institute"
+                                placeholder="Organisation"
                                 value={item.organisation}
                                 onChange={(event) => handleChange(index, event)}
                                 style={inputStyleHalf}
@@ -380,42 +385,52 @@ function Work(props) {
                         </div>
 
                         <div style={rowStyle}>
-                            <label style={labelInlineStyle}>Start Time</label>
+                            <label style={labelInlineStyle}>Start Date</label>
                             <input
                                 type="text"
                                 name="startTime"
-                                placeholder="Start Time"
+                                placeholder="Start Date"
                                 value={item.startTime}
                                 onChange={(event) => handleChange(index, event)}
                                 style={inputStyleHalf}
                             />
-                            <label style={labelInlineStyle}>End Time</label>
+                            <label style={labelInlineStyle}>End Date</label>
                             <input
                                 type="text"
                                 name="endTime"
-                                placeholder="End Time"
+                                placeholder="End Date"
                                 value={item.endTime}
                                 onChange={(event) => handleChange(index, event)}
                                 style={inputStyleHalf}
                             />
                         </div>
 
-                        <label style={labelInlineStyle}>Tasks</label>
-                            <textarea   
-                                type="text"
-                                name="tasks"
-                                placeholder="Tasks"
-                                value={item.tasks}
-                                onChange={(event) => handleChange(index, event)}
-                                rows={4}
-                                style={textareaStyle}
-                            />
-
-
                         <p style={questionTitleStyle}>Describe your work experience or projects that you've worked on. Try to provide quantifiable results, such as “Helped the department improve productivity by 20% through process optimization".</p>
+                        <textarea   
+                            type="text"
+                            name="tasks"
+                            placeholder="Describe your work experience or projects"
+                            value={item.tasks}
+                            onChange={(event) => handleChange(index, event)}
+                            rows={4}
+                            style={textareaStyle}
+                        />
+
+                         {/* <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '10px' }}>
+                            <p style={{ ...answerResultStyle, display: showWorkResult[index] ? 'block' : 'none' }}>
+                                Your answer is rated as {SVM_Rate_STQ[index]}.
+                            </p>
+                            <button
+                                onClick={() => handleOptimization(index)} style={buttonStyleGreen}
+                            >
+                                Optimize Your Answer
+                            </button>
+                        </div> */}
+
+                        <p style={questionTitleStyle}>Describe any achievement beyond your role.</p>
                         <textarea
                             name="achievements"
-                            placeholder="Describe your work experience or projects..."
+                            placeholder="Describe any achievement..."
                             value={item.achievements}
                             onChange={(event) => handleChange(index, event)}
                             rows={4}
@@ -423,9 +438,34 @@ function Work(props) {
                         />
 
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '10px' }}>
-                            <p style={{ ...answerResultStyle, display: showWorkResult[index] ? 'block' : 'none' }}>
+                            <div>
+                                {showWorkResult[index] && (SVM_Rate_STQ[index] === "Poor" || SVM_Rate_STQ[index] === "Average") && (
+                                    <p style={answerResultStyle}>
+                                        Your answer is rated as
+                                        <span style={{ 
+                                            color: SVM_Rate_STQ[index] === "Poor" ? 'red' : SVM_Rate_STQ[index] === "Average" ? 'orange' : 'black' 
+                                        }}>
+                                            {' '+SVM_Rate_STQ[index]}
+                                        </span>.
+                                        Hover over the yellow icon next to title to see helpful tips on how to write this section effectively.
+                                    </p>
+                                )}
+
+                                {showWorkResult[index] && SVM_Rate_STQ[index] === "Excellent" && (
+                                    <p style={answerResultStyle}>
+                                        Your answer is rated as 
+                                        <span style={{ color: 'green' }}>
+                                            {' '+SVM_Rate_STQ[index]}
+                                        </span>.
+                                    </p>
+                                )}
+                            </div>
+                            
+                            
+                            
+                            {/* <p style={{ ...answerResultStyle, display: showWorkResult[index] ? 'block' : 'none' }}>
                                 Your answer is rated as {SVM_Rate_STQ[index]}.
-                            </p>
+                            </p> */}
                             <button
                                 onClick={() => handleOptimization(index)} style={buttonStyleGreen}
                             >

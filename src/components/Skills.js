@@ -26,6 +26,16 @@ function Skills(props) {
 
 
     useEffect(() => {
+        const savedSkills = localStorage.getItem('Skills');
+        // 如果 localStorage 中没有 PersonalInfo，则创建一个空的 PersonalInfo 对象并保存到 localStorage
+        if (!savedSkills) {
+            const initialSkills = {
+                Q1: "",
+                Q2: ""
+            };
+            localStorage.setItem('Skills', JSON.stringify(initialSkills));
+        }
+
         const storedSkillsQ1 = localStorage.getItem('Skills1');
         const storedSkillsQ2 = localStorage.getItem('Skills2');
         const storedSVM_Skills_STQ1 = localStorage.getItem('SVM Skills STQ1');
@@ -67,7 +77,8 @@ function Skills(props) {
         };
 
         try {
-            const response = await fetch('http://10.244.159.50:1234/v1/chat/completions', {
+            const response = await fetch('http://10.244.159.50:1234/v1/chat/completions', {                
+            // const response = await fetch('http://172.25.13.59:1234/v1/chat/completions', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(requestPayload),
@@ -96,6 +107,7 @@ function Skills(props) {
         const csrftoken = getCookie('csrftoken');
         try {
             const response = await fetch('http://127.0.0.1:8000/api/predict/', {
+            // const response = await fetch('http://172.25.5.217:8000/api/predict/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -116,10 +128,12 @@ function Skills(props) {
 
 
     const handleOptimizationQ1 = async () => {
-        const skillsQ1Data  = { "What kind of skills do you have related to the job you want to apply?": skillsQ1 };
+        const skillsQ1Data  = { "What are the relevant skills you have related to the job you want? They can transfer form study, work, and voluntary.": skillsQ1 };
     
         // 将 Q1 的个人声明存储到 localStorage
         localStorage.setItem('showSkillsResult1', JSON.stringify(skillsQ1Data ));
+        localStorage.setItem('Skills1', JSON.stringify(skillsQ1));
+
     
         // 发送用户输入到 SVM，得到原始输入的评分
         await sendToSVM(skillsQ1, setSVM_Skills_STQ1, 'SVM Skills STQ1');
@@ -168,8 +182,25 @@ function Skills(props) {
     };
 
     const saveUserAnswerToLocalStorageQ1 = () => {        
-        const skills = JSON.parse(localStorage.getItem('Skills')) || { Q1: "", Q2: "" };
-        skills.Q1 = skillsQ1
+        // const skills = JSON.parse(localStorage.getItem('Skills')) || { Q1: "", Q2: "" };
+        // skills.Q1 = skillsQ1
+        // localStorage.setItem('Skills', JSON.stringify(skills));
+
+        // alert("Your answers have been saved to your CV.");
+
+        let skills = {};
+        try {
+            // Try to parse the existing data in `Skills`, or default to an object
+            skills = JSON.parse(localStorage.getItem('Skills')) || { Q1: "", Q2: "" };
+        } catch (e) {
+            console.error("Failed to parse 'Skills' from localStorage. Resetting to default.", e);
+            skills = { Q1: "", Q2: "" }; // Reset to default object if parsing fails
+        }
+
+        // Update the Q1 value with the current state
+        skills.Q1 = skillsQ1;
+
+        // Save the updated object back to localStorage
         localStorage.setItem('Skills', JSON.stringify(skills));
 
         alert("Your answers have been saved to your CV.");
@@ -292,7 +323,13 @@ function Skills(props) {
       };
 
 
-    const info = "• List key transferable skills you have that relate to the job application, for instance, collaboration, teamwork, critical thinking, continuous learning, problem-solving, adaptability, \n• Explain how you used the skill and where, e.g., Led a group of 3 classmates coordinating a work-based learning project, ensuring all tasks were completed and presented on time.\n• Start your sentences with action verbs such as collaborated, created, delivered, or use sentence starters e.g. Ability to…Skilled in…Experienced...Effective use of …"
+    const info = `· The key area of your CV – tailor your skills statements to the ones in advertisements or intended work.\n
+    · You could list your skills, then explain how you used them and where, employers need evidence.\n
+    · About 8 with a mixture of transferable soft skills such as customer service, interpersonal or problem solving skills from anywhere in your life, and technical / hard skills usually from study / work.\n
+    · Start the statement by using action verbs such as created, built, or collaborated.\n
+    · Personal attributes like honesty, reliable and friendliness are expected and often what referees comment on.\n
+    · Leave out I, me, my after the Personal Statement.
+    `
 
     return (
         <div style={{ padding: '20px', maxWidth: '800px', margin: 'auto' }}>
@@ -319,12 +356,16 @@ function Skills(props) {
 
             {/* Q1 卡片布局 */}
             <div style={cardStyle}>
-                <p style={questionTitleStyle}>1. What kind of skills do you have related to the job you want to apply? </p>
+                <p style={questionTitleStyle}>What are the relevant skills you have related to the job you want? They can transfer from study, work, and voluntary.</p>
                 <textarea
                     // placeholder="Describe your personal statement..."
                     value={skillsQ1}
                     onChange={(e) => {
                         setSkillsQ1(e.target.value);
+
+                        let skills = JSON.parse(localStorage.getItem('Skills')) || { Q1: "", Q2: "" };
+                        skills.Q1 = e.target.value;
+                        localStorage.setItem('Skills', JSON.stringify(skills));
                         localStorage.setItem('Skills1', e.target.value); // 保存到 localStorage
                     }}
                     rows={4}
@@ -332,9 +373,32 @@ function Skills(props) {
                 />
                 
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '10px' }}>
-                    <p style={{ ...answerResultStyle, display: showSkillsResult1 ? 'block' : 'none' }}>
+                    <div>
+                        {showSkillsResult1 && (SVM_Skills_STQ1 === "Poor" || SVM_Skills_STQ1 === "Average") && (
+                            <p style={answerResultStyle}>
+                                Your answer is rated as
+                                <span style={{ 
+                                    color: SVM_Skills_STQ1 === "Poor" ? 'red' : SVM_Skills_STQ1 === "Average" ? 'orange' : 'black' 
+                                }}>
+                                    {' '+SVM_Skills_STQ1}
+                                </span>.
+                                Hover over the yellow icon next to title to see helpful tips on how to write this section effectively.
+                            </p>
+                        )}
+
+                        {showSkillsResult1 && SVM_Skills_STQ1 === "Excellent" && (
+                            <p style={answerResultStyle}>
+                                Your answer is rated as 
+                                <span style={{ color: 'green' }}>
+                                    {' '+SVM_Skills_STQ1}
+                                </span>.
+                            </p>
+                        )}
+                    </div>
+
+                    {/* <p style={{ ...answerResultStyle, display: showSkillsResult1 ? 'block' : 'none' }}>
                         Your answer is rated as {SVM_Skills_STQ1}.
-                    </p>
+                    </p> */}
                     <button
                         onClick={() => handleOptimizationQ1(skillsQ1, setShowSkillsResult1, setSVM_Skills_STQ1, setSVM_Skills_AIQ1, 'chatbotResponseSkillsQ1', 'showSkillsResult1', 'SVM Skills STQ1', 'SVM Skills AIQ1')}
                         style={buttonStyleGreen}
@@ -369,7 +433,7 @@ function Skills(props) {
             </div>
 
             {/* Q2 卡片布局 */}
-            <div style={cardStyle}>
+            {/* <div style={cardStyle}>
                 <p style={questionTitleStyle}>2. Describe in detail what projects or topics you have worked on with these skills. </p>
                 <textarea
                     // placeholder="Describe your goals..."
@@ -418,9 +482,9 @@ function Skills(props) {
                     </>
                 )}
 
-            </div>
+            </div> */}
 
-            <button onClick={() => navigate('/statement')} style={buttonStyleBlue}>
+            <button onClick={() => navigate('/education')} style={buttonStyleBlue}>
                 Next Page
             </button>
         </div>

@@ -43,6 +43,8 @@ function Education(props) {
 
     // 每次状态变化时，将数据保存到 localStorage
     useEffect(() => {
+        
+
         const tempData = {
             educations,
             SVM_Rate_AIQ,
@@ -53,13 +55,13 @@ function Education(props) {
         localStorage.setItem('Education_temp', JSON.stringify(tempData));
     }, [educations, SVM_Rate_AIQ, SVM_Rate_STQ, chatbotResponseEducation, showEducationResult]);
 
-    // const handleSubmit = () => {
-    //     navigate('/work');  // 跳转到下一步
-    // };
-
     const handleSubmit = () => {
-        navigate('/skills');  // 跳转到下一步
+        navigate('/work');  // 跳转到下一步
     };
+
+    // const handleSubmit = () => {
+    //     navigate('/skills');  // 跳转到下一步
+    // };
 
     const handleChange = (index, event) => {
         const newEducations = [...educations];
@@ -94,6 +96,7 @@ function Education(props) {
 
         try {
             const response = await fetch('http://10.244.159.50:1234/v1/chat/completions', {
+            // const response = await fetch('http://172.25.13.59:1234/v1/chat/completions', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(requestPayload),
@@ -128,6 +131,7 @@ function Education(props) {
         const csrftoken = getCookie('csrftoken');
         try {
             const response = await fetch('http://127.0.0.1:8000/api/predict/', {
+            // const response = await fetch('http://172.25.5.217:8000/api/predict/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -321,14 +325,17 @@ function Education(props) {
         gap: '10px'                 // p 和 div 之间的间距
       };
 
-    const info = "• List your qualifications, the place where you studied and the start and finish dates, month, and year. You can include special projects and achievements.\n• Include secondary school if it is recent."
+    const info = `· Newest qualification first.\n
+· Only include qualifications that will get you the job.\n
+· Only include your highest level of NCEA if it will get you the job.\n
+· Briefly list course projects here that relate directly to the role.`
 
     return (
         <div style={{ padding: '20px', maxWidth: '800px', margin: 'auto' }}>
             
             <div style={containerStyle}>
 
-                <h1 style={{ textAlign: 'center', marginBottom: '30px', color: '#333', fontSize: '2rem' }}>Educations</h1>
+                <h1 style={{ textAlign: 'center', marginBottom: '30px', color: '#333', fontSize: '2rem' }}>Education</h1>
                 <div
                     className="icon-container"
                     onMouseEnter={handleMouseEnter}
@@ -363,11 +370,11 @@ function Education(props) {
                         )}
 
                         <div style={rowStyle}>
-                            <label style={labelInlineStyle}>Major</label>
+                            <label style={labelInlineStyle}>Qualification</label>
                             <input
                                 type="text"
                                 name="major"
-                                placeholder="Major"
+                                placeholder="Qualification"
                                 value={item.major}
                                 onChange={(event) => handleChange(index, event)}
                                 style={inputStyleHalf}
@@ -384,37 +391,37 @@ function Education(props) {
                         </div>
 
                         <div style={rowStyle}>
-                            <label style={labelInlineStyle}>Start Time</label>
+                            <label style={labelInlineStyle}>Start Date</label>
                             <input
                                 type="text"
                                 name="startTime"
-                                placeholder="Start Time"
+                                placeholder="Start Date"
                                 value={item.startTime}
                                 onChange={(event) => handleChange(index, event)}
                                 style={inputStyleHalf}
                             />
-                            <label style={labelInlineStyle}>End Time</label>
+                            <label style={labelInlineStyle}>End Date</label>
                             <input
                                 type="text"
                                 name="endTime"
-                                placeholder="End Time"
+                                placeholder="End Date"
                                 value={item.endTime}
                                 onChange={(event) => handleChange(index, event)}
                                 style={inputStyleHalf}
                             />
                         </div>
 
-                        <p style={questionTitleStyle}>Describe your academic achievements or notable projects you've worked on during your studies.</p>
+                        <p style={questionTitleStyle}>List some courses, projects relevant to the job you want to apply. </p>
                         <textarea
                             name="achievements"
-                            placeholder="Describe your academic achievements or notable projects..."
+                            placeholder="List some courses, projects..."
                             value={item.achievements}
                             onChange={(event) => handleChange(index, event)}
                             rows={4}
                             style={textareaStyle}
                         />
 
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '10px' }}>
+                        {/* <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '10px' }}>
                             <p style={{ ...answerResultStyle, display: showEducationResult[index] ? 'block' : 'none' }}>
                                 Your answer is rated as {SVM_Rate_STQ[index]}.
                             </p>
@@ -441,7 +448,7 @@ function Education(props) {
                                     <button onClick={() => chooseAIAnswer(index)} style={buttonStyleBlue}>Choose AI answer to the CV</button>
                                 </div>
                             </div>
-                        )}
+                        )} */}
                     </div>
                 ))}
                 <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>

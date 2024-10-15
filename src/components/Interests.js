@@ -5,6 +5,7 @@ import '../App.css';
 
 function Interests(props) {
     const navigate = useNavigate();
+    const [interests, setInterests] = useState("");
 
     const [interestsQ1, setInterestsQ1] = useState("");
     const [interestsQ2, setInterestsQ2] = useState("");
@@ -33,6 +34,16 @@ function Interests(props) {
     };
 
     useEffect(() => {
+        const savedInterests = localStorage.getItem('Interests');
+        // 如果 localStorage 中没有 PersonalInfo，则创建一个空的 PersonalInfo 对象并保存到 localStorage
+        if (!savedInterests) {
+            const initialInterests = {
+                Q1: "",
+                Q2: ""
+            };
+            localStorage.setItem('Interests', JSON.stringify(initialInterests));
+        }
+        // const interests = JSON.parse(localStorage.getItem('Interests')) || { Q1: "", Q2: "" };
         const storedInterestsQ1 = localStorage.getItem('Interests1');
         const storedInterestsQ2 = localStorage.getItem('Interests2');
         const storedSVM_Interests_STQ1 = localStorage.getItem('SVM Interests STQ1');
@@ -51,7 +62,23 @@ function Interests(props) {
         if (storedChatbotResponseInterestsQ1) setChatbotResponseInterestsQ1(storedChatbotResponseInterestsQ1);
         if (storedChatbotResponseInterestsQ2) setChatbotResponseInterestsQ2(storedChatbotResponseInterestsQ2);
 
-
+        // const savedInterests = localStorage.getItem('Interests');
+        
+        // // 如果 localStorage 中没有 PersonalInfo，则创建一个空的 PersonalInfo 对象并保存到 localStorage
+        // if (!savedInterests) {
+        //     const initialInterests = {
+        //         Q1: "",
+        //         Q2: "",
+        //     };
+        //     localStorage.setItem('Interests', JSON.stringify(initialInterests));
+        // } else {
+        //     // 如果 localStorage 中有 PersonalInfo，解析并更新 state
+        //     const parsedInterests = JSON.parse(savedInterests);
+        //     setInterestsQ1(parsedInterests.Q1 || "");
+        //     setInterestsQ2(parsedInterests.Q2 || "");
+        //     // setEmail(parsedInterests.email || "");
+        //     // setLinkedIn(parsedInterests.linkedin || "");
+        // }
 
         // 还可以设置显示状态
         setShowInterestsResult1(!!storedSVM_Interests_STQ1);
@@ -75,6 +102,7 @@ function Interests(props) {
 
         try {
             const response = await fetch('http://10.244.159.50:1234/v1/chat/completions', {
+            // const response = await fetch('http://172.25.13.59:1234/v1/chat/completions', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(requestPayload),
@@ -103,6 +131,7 @@ function Interests(props) {
         const csrftoken = getCookie('csrftoken');
         try {
             const response = await fetch('http://127.0.0.1:8000/api/predict/', {
+            // const response = await fetch('http://172.25.5.217:8000/api/predict/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -123,7 +152,7 @@ function Interests(props) {
 
 
     const handleOptimizationQ1 = async () => {
-        const interestsQ1Data  = { "What hobbies or activities are you involved in?": interestsQ1 };
+        const interestsQ1Data  = { "List a few current personal interests that are unique to you and why you do them.(Example: Play video games online.)": interestsQ1 };
     
         // 将 Q1 的个人声明存储到 localStorage
         localStorage.setItem('showInterestsResult1', JSON.stringify(interestsQ1Data ));
@@ -209,53 +238,58 @@ function Interests(props) {
         alert("AI answer for Q2 has been saved to your CV.");
     };
 
-
-    
-    // const submitHandler = async () => {
-        
-    //     const csrftoken = getCookie('csrftoken'); // 从cookie中获取CSRF token
-    //     const personalinfo = localStorage.getItem('PersonalInfo');
-    //     const personalstatement = localStorage.getItem('PersonalStatement');
-    //     const skills = localStorage.getItem('Skills');
-    //     const interests = localStorage.getItem('Interests');
-    //     const education = localStorage.getItem('Education');
-    //     const work = localStorage.getItem('Work');
-        
-    //     fetch('http://127.0.0.1:8000/api/generate-word/', {
-    //         method: 'POST',
-    //         headers: {
-    //             'Content-Type': 'application/json',
-    //             'X-CSRFToken': csrftoken,  // 获取 Django 的 CSRF Token
-    //         },
-    //         body: JSON.stringify({
-    //             "PersonalInfo": personalinfo,
-    //             'PersonalStatement':personalstatement,
-    //             'Interests':interests,
-    //             'Skills':skills,
-    //             'Education':education,
-    //             'Work':work
-    //         })
-    //     })
-    //     .then(response => response.blob())
-    //     .then(blob => {
-    //         // 创建下载链接
-    //         const url = window.URL.createObjectURL(new Blob([blob]));
-    //         const link = document.createElement('a');
-    //         link.href = url;
-    //         link.setAttribute('download', 'myCV.docx');
-    //         document.body.appendChild(link);
-    //         link.click();
-    //         link.parentNode.removeChild(link);
-    //     })
-    //     .catch(error => {
-    //         console.error('Error:', error);
-    //     });
-    // };
-
-
-    const submitHandler = () => {
-        navigate('/work');  // 跳转到下一步
+    const linkStyle = {
+        color: '#007BFF',
+        textDecoration: 'none',
+        fontWeight: 'bold',
     };
+    
+    const submitHandler = async () => {
+        
+        const csrftoken = getCookie('csrftoken'); // 从cookie中获取CSRF token
+        const personalinfo = localStorage.getItem('PersonalInfo');
+        const personalstatement = localStorage.getItem('PersonalStatement');
+        const skills = localStorage.getItem('Skills');
+        const interests = localStorage.getItem('Interests');
+        const education = localStorage.getItem('Education_temp');
+        const work = localStorage.getItem('Work_temp');
+        
+        fetch('http://127.0.0.1:8000/api/generate-word/', {
+        // fetch('http://172.25.5.217:8000/api/generate-word/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken,  // 获取 Django 的 CSRF Token
+            },
+            body: JSON.stringify({
+                "PersonalInfo": personalinfo,
+                'PersonalStatement':personalstatement,
+                'Interests':interests,
+                'Skills':skills,
+                'Education':education,
+                'Work':work
+            })
+        })
+        .then(response => response.blob())
+        .then(blob => {
+            // 创建下载链接
+            const url = window.URL.createObjectURL(new Blob([blob]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'myCV.docx');
+            document.body.appendChild(link);
+            link.click();
+            link.parentNode.removeChild(link);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    };
+
+
+    // const submitHandler = () => {
+    //     navigate('/work');  // 跳转到下一步
+    // };
 
     
     // 卡片样式
@@ -337,7 +371,10 @@ function Interests(props) {
         gap: '10px'                 // p 和 div 之间的间距
       };
 
-    const info = "List a few current personal interests that are unique to you and why you do them."
+    const info = `· Add 3-4 interests to demonstrate work-life balance.\n
+· Add some volunteer work – giving back is important for organisations.\n
+· Try and avoid generic interests like family, Netflix, travel.\n
+· If nothing springs to mind – take up a new hobby!`
 
     return (
         <div style={{ padding: '20px', maxWidth: '800px', margin: 'auto' }}>
@@ -363,22 +400,51 @@ function Interests(props) {
             </div>
             {/* Q1 卡片布局 */}
             <div style={cardStyle}>
-                <p style={questionTitleStyle}>1. What hobbies or activities are you involved in? </p>
+                <p style={questionTitleStyle}>List a few current personal interests that are unique to you and why you do them.(Example: Play video games online.) </p>
                 <textarea
                     placeholder="Describe your interests and hobbies..."
                     value={interestsQ1}
                     onChange={(e) => {
                         setInterestsQ1(e.target.value);
+                        let interests = JSON.parse(localStorage.getItem('Interests')) || { Q1: "", Q2: "" };
+                        interests.Q1 = e.target.value;
+                        localStorage.setItem('Interests', JSON.stringify(interests));
                         localStorage.setItem('Interests1', e.target.value); // 保存到 localStorage
+                        // localStorage.setItem('Interests', e.target.value);
+                        // Interests.Q1 = e.target.value;
                     }}
                     rows={4}
                     style={textareaStyle}
                 />
                 
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '10px' }}>
-                    <p style={{ ...answerResultStyle, display: showInterestsResult1 ? 'block' : 'none' }}>
+                    <div>
+                        {showInterestsResult1 && (SVM_Interests_STQ1 === "Poor" || SVM_Interests_STQ1 === "Average") && (
+                            <p style={answerResultStyle}>
+                                Your answer is rated as
+                                <span style={{ 
+                                    color: SVM_Interests_STQ1 === "Poor" ? 'red' : SVM_Interests_STQ1 === "Average" ? 'orange' : 'black' 
+                                }}>
+                                    {' '+SVM_Interests_STQ1}
+                                </span>.
+                                Hover over the yellow icon next to title to see helpful tips on how to write this section effectively.
+                            </p>
+                        )}
+
+                        {showInterestsResult1 && SVM_Interests_STQ1 === "Excellent" && (
+                            <p style={answerResultStyle}>
+                                Your answer is rated as 
+                                <span style={{ color: 'green' }}>
+                                    {' '+SVM_Interests_STQ1}
+                                </span>.
+                            </p>
+                        )}
+                    </div>
+                    
+                    
+                    {/* <p style={{ ...answerResultStyle, display: showInterestsResult1 ? 'block' : 'none' }}>
                         Your answer is rated as {SVM_Interests_STQ1}.
-                    </p>
+                    </p> */}
                     <button
                         onClick={() => handleOptimizationQ1(interestsQ1, setShowInterestsResult1, setSVM_Interests_STQ1, setSVM_Interests_AIQ1, 'chatbotResponseInterestsQ1', 'showInterestsResult1', 'SVM Interests STQ1', 'SVM Interests AIQ1')}
                         style={buttonStyleGreen}
@@ -415,7 +481,7 @@ function Interests(props) {
             </div>
 
             {/* Q2 卡片布局 */}
-            <div style={cardStyle}>
+            {/* <div style={cardStyle}>
                 <p style={questionTitleStyle}>2. How do they affect your personal development?</p>
                 <textarea
                     placeholder="How have your interests contributed to your personal development?"
@@ -464,9 +530,12 @@ function Interests(props) {
                     </>
                 )}
 
+            </div> */}
+            <div style={{ display: 'flex', gap: '10px' }}>
+                    <button style={buttonStyleBlue} onClick={submitHandler}>Submit</button>
+                    <button style={buttonStyleGreen} onClick={() => window.location.href = 'https://forms.office.com/r/P2qPkYTpaF'}>Survey Link</button>
+                    {/* <a href="https://forms.office.com/r/P2qPkYTpaF" style={linkStyle}>Survey Link</a> */}
             </div>
-
-            <button style={buttonStyleBlue} onClick={submitHandler}>Next Page</button>
         </div>
 
 
