@@ -88,8 +88,8 @@ function Work(props) {
         };
 
         try {
-            const response = await fetch('http://10.244.159.50:1234/v1/chat/completions', {
-            // const response = await fetch('http://172.25.13.59:1234/v1/chat/completions', {
+            // const response = await fetch('http://10.244.159.50:1234/v1/chat/completions', {
+            const response = await fetch('http://172.25.13.59:1234/v1/chat/completions', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(requestPayload),
@@ -123,8 +123,8 @@ function Work(props) {
     const sendToSVM = async (content, index, localStorageKey, setRate) => {
         const csrftoken = getCookie('csrftoken');
         try {
-            const response = await fetch('http://127.0.0.1:8000/api/predict/', {
-            // const response = await fetch('http://172.25.5.217:8000/api/predict/', {
+            // const response = await fetch('http://127.0.0.1:8000/api/predict/', {
+            const response = await fetch('http://172.25.0.210:8000/api/predict/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -188,22 +188,54 @@ function Work(props) {
     };
 
     // 保存 AI 生成的内容到 CV
-    const chooseAIAnswer = (index) => {
-        const savedWork = JSON.parse(localStorage.getItem('Work')) || {};
+    // const chooseAIAnswer = (index) => {
+    //     const savedWork = JSON.parse(localStorage.getItem('Work')) || {};
 
+    //     savedWork[`Work${index + 1}`] = {
+    //         job_title: work[index].job_title,
+    //         organisation: work[index].organisation,
+    //         startTime: work[index].startTime,
+    //         endTime: work[index].endTime,
+    //         tasks: work[index].tasks,
+    //         achievements: chatbotResponseWork[index] // 使用 AI 生成的 achievements
+    //     };
+
+    //     // 保存到 localStorage
+    //     localStorage.setItem('Work', JSON.stringify(savedWork));
+    //     alert("AI answer has been saved to your CV.");
+    // };
+
+    // 保存 AI 生成的内容到 Work_temp 和 CV
+    const chooseAIAnswer = (index) => {
+        // 获取当前的 Work_temp
+        const tempData = JSON.parse(localStorage.getItem('Work_temp')) || { work: [] };
+
+        // 更新 achievements 字段
+        const updatedWork = [...tempData.work];  // 确保不会修改原始数据
+        if (updatedWork[index]) {
+            updatedWork[index].achievements = chatbotResponseWork[index];  // 使用 AI 生成的 achievements
+        }
+
+        // 更新 Work_temp 中的 work 部分
+        tempData.work = updatedWork;
+        localStorage.setItem('Work_temp', JSON.stringify(tempData));  // 更新 Work_temp 到 localStorage
+
+        // 同时更新到 CV 的 Work 中
+        const savedWork = JSON.parse(localStorage.getItem('Work')) || {};
         savedWork[`Work${index + 1}`] = {
             job_title: work[index].job_title,
             organisation: work[index].organisation,
             startTime: work[index].startTime,
             endTime: work[index].endTime,
             tasks: work[index].tasks,
-            achievements: chatbotResponseWork[index] // 使用 AI 生成的 achievements
+            achievements: chatbotResponseWork[index]  // 使用 AI 生成的 achievements
         };
 
         // 保存到 localStorage
         localStorage.setItem('Work', JSON.stringify(savedWork));
         alert("AI answer has been saved to your CV.");
     };
+
 
 
     const inputStyleHalf = {

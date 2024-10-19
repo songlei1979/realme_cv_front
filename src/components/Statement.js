@@ -77,8 +77,8 @@ function Statement(props) {
         };
 
         try {
-            const response = await fetch('http://10.244.159.50:1234/v1/chat/completions', {
-            // const response = await fetch('http://172.25.13.59:1234/v1/chat/completions', {
+            // const response = await fetch('http://10.244.159.50:1234/v1/chat/completions', {
+            const response = await fetch('http://172.25.13.59:1234/v1/chat/completions', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(requestPayload),
@@ -106,8 +106,8 @@ function Statement(props) {
     const sendToSVM = async (content, setRate, localStorageKey) => {
         const csrftoken = getCookie('csrftoken');
         try {
-            const response = await fetch('http://127.0.0.1:8000/api/predict/', {
-            // const response = await fetch('http://172.25.5.217:8000/api/predict/', {
+            // const response = await fetch('http://127.0.0.1:8000/api/predict/', {
+            const response = await fetch('http://172.25.0.210:8000/api/predict/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -248,7 +248,7 @@ function Statement(props) {
         // 将更新后的对象保存回 localStorage
         localStorage.setItem('PersonalStatement', JSON.stringify(personalStatement));
     
-        alert("AI answer for Q1 has been saved to your CV.");
+        alert("AI answer has been saved to your CV.");
     };
 
     const chooseAIAnswerForQ2 = () => {

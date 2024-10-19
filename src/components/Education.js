@@ -95,8 +95,8 @@ function Education(props) {
         };
 
         try {
-            const response = await fetch('http://10.244.159.50:1234/v1/chat/completions', {
-            // const response = await fetch('http://172.25.13.59:1234/v1/chat/completions', {
+            // const response = await fetch('http://10.244.159.50:1234/v1/chat/completions', {
+            const response = await fetch('http://172.25.13.59:1234/v1/chat/completions', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(requestPayload),
@@ -130,8 +130,8 @@ function Education(props) {
     const sendToSVM = async (content, index, localStorageKey, setRate) => {
         const csrftoken = getCookie('csrftoken');
         try {
-            const response = await fetch('http://127.0.0.1:8000/api/predict/', {
-            // const response = await fetch('http://172.25.5.217:8000/api/predict/', {
+            // const response = await fetch('http://127.0.0.1:8000/api/predict/', {
+            const response = await fetch('http://172.25.0.210:8000/api/predict/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',

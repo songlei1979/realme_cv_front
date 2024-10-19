@@ -67,7 +67,9 @@ function Skills(props) {
             messages: [
                 {
                     role: "system",
-                    content: "You are a master in writting CV. Please optimize the user's answer based on the questions in the message. Make it more suitable for writing in resume. Return only the optimized answer without any introduction or extra explanations.And don't put “” before or after your reply."
+                    content: `What you are: You are a master in writting CV. Please optimize the user's answer based on the questions in the message. 
+                    My requirement is : Optimize the answer more suitable for writing in CV. Looks more professional.
+                    Format is: If the content of your answer includes multiple skills, use the bullpoint format to separate them, one skill per line. Return only the optimized answer without any introduction or extra explanations.And don't put “” before or after your reply.`
                 },
                 {
                     role: "user",
@@ -77,8 +79,8 @@ function Skills(props) {
         };
 
         try {
-            const response = await fetch('http://10.244.159.50:1234/v1/chat/completions', {                
-            // const response = await fetch('http://172.25.13.59:1234/v1/chat/completions', {
+            // const response = await fetch('http://10.244.159.50:1234/v1/chat/completions', {                
+            const response = await fetch('http://172.25.13.59:1234/v1/chat/completions', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(requestPayload),
@@ -106,8 +108,8 @@ function Skills(props) {
     const sendToSVM = async (content, setRate, localStorageKey) => {
         const csrftoken = getCookie('csrftoken');
         try {
-            const response = await fetch('http://127.0.0.1:8000/api/predict/', {
-            // const response = await fetch('http://172.25.5.217:8000/api/predict/', {
+            // const response = await fetch('http://127.0.0.1:8000/api/predict/', {
+            const response = await fetch('http://172.25.0.210:8000/api/predict/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -223,7 +225,7 @@ function Skills(props) {
         // 将更新后的对象保存回 localStorage
         localStorage.setItem('Skills', JSON.stringify(skills));
     
-        alert("AI answer for Q1 has been saved to your CV.");
+        alert("AI answer has been saved to your CV.");
     };
 
     const chooseAIAnswerForQ2 = () => {

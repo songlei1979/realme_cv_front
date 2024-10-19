@@ -52,7 +52,7 @@ function Home(props) {
         <div style={containerStyle}>
             <h1 style={{ textAlign: 'center', marginBottom: '30px', color: '#333', fontSize: '2rem' }}>The RealMe CV</h1>
             <p style={textStyle}>
-                This website is designed to help you learn how to write an excellent CV. It is divided into five main sections: Personal Information, Personal Statement, Key Skills, Education, Work Experience, and Interests. Each section corresponds to a key part of your CV.
+                This website is designed to help you learn how to write an excellent CV. It is divided into six main sections: Personal Information, Personal Statement, Key Skills, Education, Work Experience, and Interests. Each section corresponds to a key part of your CV.
             </p>
             <p style={textStyle}>
                 On the website, you can fill in the relevant information and answer questions. Based on your responses, the AI will provide a rating and generate an AI-optimized version of your answers, along with an AI-generated rating. You can review and improve your own answers using the AI suggestions until you are satisfied. In the end, the system will generate a complete CV based on the information you provided. Next to each title, there is a hint icon<img src= {require("../icon.png")} width="15" height="15"/>. Hovering over the icon will display key tips to consider when completing that section.
